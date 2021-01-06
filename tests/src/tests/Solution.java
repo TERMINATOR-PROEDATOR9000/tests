@@ -38,14 +38,33 @@ public class Solution {
 
 	public static void main(String... args) throws Exception {
 		/*
-		 * try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
-		 * catch (Exception e) {}
+		 * try {
+		 * UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		 * } catch (Exception e) {}
 		 */
-		//hehe
-
-		new Add();
+		// hehe
+		Cherck a = new Cherck();
+		a.i = 1;
+		a.t = "1";
+		a.o = new DD();
+		Cherck b = new Cherck();
+		b.i = 2;
+		b.t = "2";
+		b.o = new Rome();
+		System.out.println(a);
+		System.out.println(b);
 	}
 
+}
+
+class Cherck {
+	int i;
+	String t;
+	Object o;
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName()+":\n\t"+i+"\n\t"+t+"\n\t"+o.getClass().getSimpleName()+"\n";
+	}
 }
 
 class ChanellTsest {
@@ -53,16 +72,16 @@ class ChanellTsest {
 	StringBuilder sb = new StringBuilder();
 
 	public ChanellTsest() throws Exception {
-		
-		
 
 		/*
 		 * BufferedReader br=new BufferedReader(new
-		 * FileReader("C:\\Users\\"+System.getProperty("user.name")+"Desktop\\ee.txt")); while(br.ready()) {
-		 * sb.append(br.readLine()); }
+		 * FileReader("C:\\Users\\"+System.getProperty("user.name")+"Desktop\\ee
+		 * .txt")); while(br.ready()) { sb.append(br.readLine()); }
 		 */
 
-		FileChannel fc = new FileInputStream("C:\\Users\\"+System.getProperty("user.name")+"\\Desktop\\dd.txt").getChannel();
+		FileChannel fc = new FileInputStream("C:\\Users\\"
+				+ System.getProperty("user.name") + "\\Desktop\\dd.txt")
+						.getChannel();
 		ByteBuffer bf = ByteBuffer.allocate(bsize);
 		fc.read(bf);
 		bf.flip();
@@ -77,14 +96,16 @@ class ChanellTsest {
 
 		bf.rewind();
 
-		fc = new RandomAccessFile("C:\\Users\\"+System.getProperty("user.name")+"\\Desktop\\ee.txt", "rw").getChannel();
+		fc = new RandomAccessFile("C:\\Users\\"
+				+ System.getProperty("user.name") + "\\Desktop\\ee.txt", "rw")
+						.getChannel();
 		fc.position(fc.size() / 2);
 		fc.write(ByteBuffer.wrap(sb.toString().getBytes()));
 
 		/*
 		 * DataOutputStream dos=new DataOutputStream(new
-		 * FileOutputStream("C:\\Users\\"+System.getProperty("user.name")+"\\Desktop\\dd.txt"));
-		 * dos.write(sb.toString().getBytes()); dos.close();
+		 * FileOutputStream("C:\\Users\\"+System.getProperty("user.name")+"\\
+		 * Desktop\\dd.txt")); dos.write(sb.toString().getBytes()); dos.close();
 		 */
 		fc.close();
 	}
@@ -115,14 +136,15 @@ class TestThreadA {
 			new ThreadA().start();
 		}
 		Thread.sleep(4000);
-		System.out.println(
-				"q = " + ThreadA.q + ", time = " + (((double) (System.nanoTime() - time) / 1_000_000_000) - 4d));
+		System.out.println("q = " + ThreadA.q + ", time = "
+				+ (((double) (System.nanoTime() - time) / 1_000_000_000) - 4d));
 		System.out.println("Start singlethread part of test...");
 		long time2 = System.nanoTime();
 		for (int i = 0; i < ThreadA.q; i++) {
 			result++;
 		}
-		System.out.println("r = " + result + ", time = " + (double) (System.nanoTime() - time2) / 1_000_000_000);
+		System.out.println("r = " + result + ", time = "
+				+ (double) (System.nanoTime() - time2) / 1_000_000_000);
 	}
 }
 
@@ -151,7 +173,7 @@ class A3 implements A1, A2 {
 		System.out.println("meth2");
 	}
 
-	public <T> void meth3(T t) {
+	public <T> void meth5(T t) {
 		System.out.println(t.getClass().getName());
 	}
 }
@@ -243,7 +265,8 @@ class Add extends JFrame {
 	ProgressMonitor pm;
 	JButton b = new JButton();
 	JLabel lab = new JLabel("HAHA", JLabel.CENTER);
-	JButton exit = new JButton("<html><b><i><font size=-2>Exit baton</i></b></html>");
+	JButton exit = new JButton(
+			"<html><b><i><font size=-2>Exit baton</i></b></html>");
 	final Object o = new Object();
 	JSlider js = new JSlider();
 	volatile boolean x = false;
@@ -289,8 +312,9 @@ class Add extends JFrame {
 		add(b);
 		add(lab);
 		/*
-		 * try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
-		 * catch (Exception e) {}
+		 * try {
+		 * UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		 * } catch (Exception e) {}
 		 */
 		setVisible(true);
 
@@ -304,7 +328,8 @@ class Add extends JFrame {
 					for (int i = 0; i < 101; i++) {
 						if (pm.isCanceled()) {
 							o.notifyAll();
-							JOptionPane.showMessageDialog(this, "Operation been canceled", "Error",
+							JOptionPane.showMessageDialog(this,
+									"Operation been canceled", "Error",
 									JOptionPane.ERROR_MESSAGE);
 							break;
 						}
@@ -338,7 +363,8 @@ class Add extends JFrame {
 				if (!pm.isCanceled()) {
 					lab.setForeground(sqe);
 					exit.setBackground(sqe);
-					lab.setText(String.format("<html><font size=+2>%s", sqe.toString()));
+					lab.setText(String.format("<html><font size=+2>%s",
+							sqe.toString()));
 					try {
 						Thread.sleep(3000);
 					} catch (InterruptedException e) {
@@ -354,18 +380,22 @@ class Add extends JFrame {
 
 class DD {
 	public <T> void viod(T x, T y, T z) {
-		System.out.println(x.getClass().getName() + " " + y.getClass().getName() + " " + z.getClass().getName());
+		System.out.println(x.getClass().getName() + " " + y.getClass().getName()
+				+ " " + z.getClass().getName());
 	}
 }
 
 class Rome {
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Input a roman number to be converted to decimal: ");
-		String romanString = bufferedReader.readLine();
-		System.out.println("Conversion result equals " + romanToInteger(romanString));
-	}
+	/*
+	 * public static void main(String[] args) throws IOException {
+	 * BufferedReader bufferedReader = new BufferedReader(new
+	 * InputStreamReader(System.in));
+	 * System.out.println("Input a roman number to be converted to decimal: ");
+	 * String romanString = bufferedReader.readLine();
+	 * System.out.println("Conversion result equals " +
+	 * romanToInteger(romanString)); }
+	 */
 
 	public static int romanToInteger(String s) {
 		int result = 0;
@@ -377,7 +407,7 @@ class Rome {
 			if (i < temp.length - 1) {
 				if (c.equals("I") && temp[i + 1].equals("V")) {
 					c = "IV";
-					i++;// 4					
+					i++;// 4
 				}
 
 				if (c.equals("I") && temp[i + 1].equals("X")) {
@@ -399,69 +429,71 @@ class Rome {
 				if (c.equals("C") && temp[i + 1].equals("M")) {
 					c = "CM";
 					i++;// 900
-				}			}
+				}
+			}
 
 			switch (c) {
-			case "I": {
-				result += 1;
-				break;
-			}
-			case "IV": {
-				result += 4;
-				break;
-			}
-			case "V": {
-				result += 5;
-				break;
-			}
-			case "IX": {
-				result += 9;
-				break;
-			}
-			case "X": {
-				result += 10;
-				break;
-			}
-			case "XL": {
-				result += 40;
-				break;
-			}
-			case "L": {
-				result += 50;
-				break;
-			}
-			case "XC": {
-				result += 90;
-				break;
-			}
-			case "C": {
-				result += 100;
-				break;
-			}
-			case "CD": {
-				result += 400;
-				break;
-			}
-			case "D": {
-				result += 500;
-				break;
-			}
-			case "CM": {
-				result += 900;
-				break;
-			}
-			case "M": {
-				result += 1000;
-				break;
-			}
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + c);
+				case "I" : {
+					result += 1;
+					break;
+				}
+				case "IV" : {
+					result += 4;
+					break;
+				}
+				case "V" : {
+					result += 5;
+					break;
+				}
+				case "IX" : {
+					result += 9;
+					break;
+				}
+				case "X" : {
+					result += 10;
+					break;
+				}
+				case "XL" : {
+					result += 40;
+					break;
+				}
+				case "L" : {
+					result += 50;
+					break;
+				}
+				case "XC" : {
+					result += 90;
+					break;
+				}
+				case "C" : {
+					result += 100;
+					break;
+				}
+				case "CD" : {
+					result += 400;
+					break;
+				}
+				case "D" : {
+					result += 500;
+					break;
+				}
+				case "CM" : {
+					result += 900;
+					break;
+				}
+				case "M" : {
+					result += 1000;
+					break;
+				}
+				default :
+					throw new IllegalArgumentException(
+							"Unexpected value: " + c);
 			}
 		}
 		return result;
 	}
 }
 
-class ASFASF{
-	 
+class ASFASF {
+
 }
