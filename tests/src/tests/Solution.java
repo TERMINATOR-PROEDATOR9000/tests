@@ -34,7 +34,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
-public class Solution {
+public class Solution {	
 	
 	static {
 		System.out.println(Thread.currentThread().getStackTrace()[1].getLineNumber());
