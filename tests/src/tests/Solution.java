@@ -35,6 +35,10 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
 public class Solution {
+	
+	static {
+		System.out.println(Thread.currentThread().getStackTrace()[1].getLineNumber());
+	}
 
 	public static void main(String... args) throws Exception {
 		/*
