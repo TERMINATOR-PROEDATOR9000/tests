@@ -36,9 +36,9 @@ import java.nio.charset.Charset;
 
 public class Solution {	
 	
-	static {
+	/*static {
 		System.out.println(Thread.currentThread().getStackTrace()[1].getLineNumber());
-	}
+	}*/
 
 	public static void main(String... args) throws Exception {
 		/*
@@ -47,18 +47,40 @@ public class Solution {
 		 * } catch (Exception e) {}
 		 */
 		// hehe
-		Cherck a = new Cherck();
-		a.i = 1;
-		a.t = "1";
-		a.o = new DD();
-		Cherck b = new Cherck();
-		b.i = 2;
-		b.t = "2";
-		b.o = new Rome();
-		System.out.println(a);
-		System.out.println(b);
+		new BinarySearch().search(22);
 	}
 
+}
+
+class BinarySearch{
+	private int [] arr = {0,2,4,5,6,8,12,22,65,235,633,1111,2112,3313,12314,144125,1124146,1124127,1124124458,612341319};
+	
+	public void search(int number) {
+		int result=0;
+		int low=0;
+		int max=arr.length-1;
+		while(true) {
+			int index=(low+max)/2;
+			if(arr[index]==number) {
+				result = index;
+				break;
+			}
+			else if(low>max) {
+				System.out.println("Can't find number: "+number);
+				return;
+			}
+			else {
+				if(arr[index]<number) {
+					low=index+1;
+				}else {
+					max=index-1;
+				}
+				
+			}
+		}
+		System.out.println("Found in position: "+(result+1)+", number is: "+arr[result]);
+	}
+	
 }
 
 class Cherck {
