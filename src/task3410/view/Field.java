@@ -41,10 +41,11 @@ public class Field extends JPanel {
 			}
 			case (KeyEvent.VK_R): {
 				eventListener.restart();
-				;
+				break;
 			}
 			case (KeyEvent.VK_N): {
 				eventListener.levelCompleted(Model.currentLevel);
+				break;
 			}
 			}
 		}

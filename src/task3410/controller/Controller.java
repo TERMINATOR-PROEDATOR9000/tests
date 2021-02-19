@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import task3410.model.Direction;
 import task3410.model.GameObjects;
 import task3410.model.Model;
@@ -38,6 +40,7 @@ public class Controller implements EventListener{
 	@Override
 	public void restart() {
 		model.restart();
+		JOptionPane.showMessageDialog(view, "Level restarted.");
 		view.update();
 	}
 
