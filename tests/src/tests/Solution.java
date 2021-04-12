@@ -1,63 +1,27 @@
 package tests;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridBagLayout;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
-import java.io.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 
+import java.io.*;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.colorchooser.ColorSelectionModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.FileChooserUI;
-import javax.swing.plaf.basic.BasicArrowButton;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import com.github.abrarsyed.jastyle.ASFormatter;
-import com.github.abrarsyed.jastyle.FormatterHelper;
-import com.github.abrarsyed.jastyle.constants.EnumFormatStyle;
-
-import java.lang.reflect.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -66,6 +30,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class Solution {
+    
+    public static final String home = System.getProperty("user.home");
 
     public static void main(String... args) throws Exception {
 
@@ -80,119 +46,192 @@ public class Solution {
 	// new Random().ints(Integer.MAX_VALUE / 2,
 	// Integer.MAX_VALUE).limit(50).forEach(i -> System.out.println(i % 60));
 	// new RealHashKarta();
-	// new AfterPDFtoFB2Convertor();	
+	// new AfterPDFtoFB2Convertor();
+	new DrawFromCodedImage().init();
     }
 
 }
 
+class DrawFromCodedImage {
+   
 
-/*class Pars {
-    private static StringBuilder sb = new StringBuilder();
-    private static String mainurl = "";
-    public static void main(String... args) {
-	try {
-	    List<String> links = new ArrayList<String>();
-	    Document doc = Jsoup.connect("").userAgent("Chrome/81.0.4044.138").get();
-	    Elements text = doc.getElementsByTag("a");
-	    for (Element el : text) {
-		String aa = el.attr("href");
-		if (aa.contains("books/")) {
-		    links.add(mainurl + aa);
+    public void init() {
+	new Thread(() -> {
+	    @SuppressWarnings("serial")
+	    class Show extends JFrame {
+		StringBuilder sb = new StringBuilder();
+		{
+		    sb.append("FIRST_LINE\n");
+		    sb.append("SECOND_LINE\n");
+		    sb.append("THIRD_LINE\n");
+		    sb.append("FOURTH_LINE");
+		}
+
+		@Override
+		public void paint(Graphics g) {
+		    super.paint(g);
+
+		    String[] arr = sb.toString().split("\n");
+		    Graphics2D g2d = (Graphics2D) g;
+		    for (int i = 0; i < arr.length; i++) {
+			new TextLayout(arr[i], new Font("", Font.BOLD, 12), new FontRenderContext(null, false, false))
+				.draw(g2d, 10, 560 + i * 10);
+		    }
+		    /*
+		     * TextLayout jlb = new TextLayout(arr[0], new Font("", Font.BOLD, 12),
+		     * new FontRenderContext(null, false, false));
+		     * TextLayout jlb1 = new TextLayout(arr[1], new Font("", Font.BOLD, 12),
+		     * new FontRenderContext(null, false, false));
+		     * TextLayout jlb2 = new TextLayout(arr[2], new Font("", Font.BOLD, 12),
+		     * new FontRenderContext(null, false, false));
+		     * jlb.draw(g2d, 10, 570);
+		     * jlb1.draw(g2d, 20, 580);
+		     * jlb2.draw(g2d, 20, 590);
+		     */
+
+		}
+
+		public void init() {
+		    try {
+			java.nio.file.Path in = Paths.get(Solution.home + "\\Desktop\\1545555253164317477.jpg");
+			java.nio.file.Path out = Paths.get(Solution.home + "\\Desktop\\qq.txt");
+			byte[] coded = new byte[(int) in.toFile().length()];
+			FileInputStream fis = new FileInputStream(in.toFile());
+			fis.read(coded);
+			fis.close();
+
+			String codedImage = Base64.getEncoder().encodeToString(coded);
+			Files.write(out, codedImage.getBytes());
+
+			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			this.setBounds(200, 200, 400, 610);
+			fis = new FileInputStream(out.toFile());
+			byte[] decoded = new byte[(int) out.toFile().length()];
+			fis.read(decoded);
+			ImageIcon icon = new ImageIcon(Base64.getDecoder().decode(decoded));
+			this.getContentPane().add(new JLabel(icon));
+			this.setVisible(true);
+		    } catch (Exception e) {
+			System.out.println("EEEEERROOOORRRR AAAA");
+		    }
 		}
 	    }
-	    System.out.println(links);
-	    new Pars().worker(links);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-	try {
-	    Files.write(Paths.get("C:\\Users\\*\\Desktop\\res.txt"), sb.toString().getBytes());
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+	    new Show().init();
+	}).start();
     }
-    private void worker(List<String> ls) {
-	
-	try {
-	    //for (String s : ls) {
-		String s=ls.get(10);		
-		Document doc = Jsoup.connect(s).userAgent("Chrome/81.0.4044.138").get();
-		Elements elem = doc.getElementsByTag("code");		
-		AtomicInteger count = new AtomicInteger(0);
-		// StringBuilder sb = new StringBuilder();
-		String[] code =elem.text().split("~");
-		System.err.println("-------->"+code.length);
-		//for (int i = 0; i < code.length; i++) {
-		//    System.out.println(code[i]);
-		//}
-		for (int i = 0; i < code.length; i++) {
-		    code[i] = code[i] + "\n";
-		}
-		doc.body().html().lines().forEach(e -> {		    
-		    e = e.trim();
-		    if (e.startsWith("<p>")) {
-			e = e.replace("<p>", "");
-			if (e.endsWith("</p>")) {
-			    e = e.replace("</p>", "");
-			}
-			sb.append(e + "\n");
-		    }
-		    if (e.startsWith("<li>") && !e.contains("href")) {
-			e = e.replace("<li>", "");
-			if (e.endsWith("</li>")) {
-			    e = e.replace("</li>", "");
-			}
-			sb.append("\t* " + e + "\n");
-		    }
-		    if (e.contains("<code")) {
-			sb.append("\n" + transform(code[count.getAndIncrement()]) + "\n");
-			//sb.append("\n" + transform(elem.text()) + "\n");
-			// System.out.println(elem.text());
-		    }
-		});
-	    //}
-	} catch (Exception e2) {
-	     e2.printStackTrace();
-	}
-	//System.out.println(sb);
-    }
-    private static String transform(String s) {	
-	List<String> arr = List.of(s.split(" "));
-	String newS = "";
-	for (String as : arr) {
-	    if (as.equals("//") || as.equals("//:") || as.equals("/:") || as.equals("/ :")) {
-		continue;
-	    }
-	    newS += as + " ";
-	}
-	System.out.println(newS);
-	String result = " ";
-	//s = s.replaceAll("//: ", "");
-	//s = s.replaceAll("// ", "");
-	BufferedReader in = null;
-	try {
-	    ASFormatter formatter = new ASFormatter();
-	    in = new BufferedReader(new StringReader(newS));
-	    formatter.setFormattingStyle(EnumFormatStyle.JAVA);
-	    try {
-	    result = FormatterHelper.format(in, formatter);
-	    }catch (StringIndexOutOfBoundsException e) {
-		
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
-	} finally {
-	    try {
-		in.close();
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
-	}
-	// StringBuilder sb = new StringBuilder();
-	// result.lines().skip(1).forEach(e -> sb.append(e + "\n"));
-	return result;
-    }
-}*/
+}
+
+/*
+ * class Pars {
+ * private static StringBuilder sb = new StringBuilder();
+ * private static String mainurl = "";
+ * public static void main(String... args) {
+ * try {
+ * List<String> links = new ArrayList<String>();
+ * Document doc = Jsoup.connect("").userAgent("Chrome/81.0.4044.138").get();
+ * Elements text = doc.getElementsByTag("a");
+ * for (Element el : text) {
+ * String aa = el.attr("href");
+ * if (aa.contains("books/")) {
+ * links.add(mainurl + aa);
+ * }
+ * }
+ * System.out.println(links);
+ * new Pars().worker(links);
+ * } catch (Exception e) {
+ * e.printStackTrace();
+ * }
+ * try {
+ * Files.write(Paths.get("C:\\Users\\*\\Desktop\\res.txt"),
+ * sb.toString().getBytes());
+ * } catch (IOException e) {
+ * e.printStackTrace();
+ * }
+ * }
+ * private void worker(List<String> ls) {
+ * 
+ * try {
+ * //for (String s : ls) {
+ * String s=ls.get(10);
+ * Document doc = Jsoup.connect(s).userAgent("Chrome/81.0.4044.138").get();
+ * Elements elem = doc.getElementsByTag("code");
+ * AtomicInteger count = new AtomicInteger(0);
+ * // StringBuilder sb = new StringBuilder();
+ * String[] code =elem.text().split("~");
+ * System.err.println("-------->"+code.length);
+ * //for (int i = 0; i < code.length; i++) {
+ * // System.out.println(code[i]);
+ * //}
+ * for (int i = 0; i < code.length; i++) {
+ * code[i] = code[i] + "\n";
+ * }
+ * doc.body().html().lines().forEach(e -> {
+ * e = e.trim();
+ * if (e.startsWith("<p>")) {
+ * e = e.replace("<p>", "");
+ * if (e.endsWith("</p>")) {
+ * e = e.replace("</p>", "");
+ * }
+ * sb.append(e + "\n");
+ * }
+ * if (e.startsWith("<li>") && !e.contains("href")) {
+ * e = e.replace("<li>", "");
+ * if (e.endsWith("</li>")) {
+ * e = e.replace("</li>", "");
+ * }
+ * sb.append("\t* " + e + "\n");
+ * }
+ * if (e.contains("<code")) {
+ * sb.append("\n" + transform(code[count.getAndIncrement()]) + "\n");
+ * //sb.append("\n" + transform(elem.text()) + "\n");
+ * // System.out.println(elem.text());
+ * }
+ * });
+ * //}
+ * } catch (Exception e2) {
+ * e2.printStackTrace();
+ * }
+ * //System.out.println(sb);
+ * }
+ * private static String transform(String s) {
+ * List<String> arr = List.of(s.split(" "));
+ * String newS = "";
+ * for (String as : arr) {
+ * if (as.equals("//") || as.equals("//:") || as.equals("/:") ||
+ * as.equals("/ :")) {
+ * continue;
+ * }
+ * newS += as + " ";
+ * }
+ * System.out.println(newS);
+ * String result = " ";
+ * //s = s.replaceAll("//: ", "");
+ * //s = s.replaceAll("// ", "");
+ * BufferedReader in = null;
+ * try {
+ * ASFormatter formatter = new ASFormatter();
+ * in = new BufferedReader(new StringReader(newS));
+ * formatter.setFormattingStyle(EnumFormatStyle.JAVA);
+ * try {
+ * result = FormatterHelper.format(in, formatter);
+ * }catch (StringIndexOutOfBoundsException e) {
+ * 
+ * }
+ * } catch (Exception e) {
+ * e.printStackTrace();
+ * } finally {
+ * try {
+ * in.close();
+ * } catch (IOException e) {
+ * e.printStackTrace();
+ * }
+ * }
+ * // StringBuilder sb = new StringBuilder();
+ * // result.lines().skip(1).forEach(e -> sb.append(e + "\n"));
+ * return result;
+ * }
+ * }
+ */
 
 enum Perech {
     HAHA, HEHE;
@@ -881,28 +920,28 @@ class BagChooser {
 	    resultList.add(start);
 	    sL("Result:\n\t\tWeight " + tWeight + " found in mix: " + resultList.toString() + ".\n\t\tCheck sum: "
 		    + resultList.stream().mapToInt(v -> v).sum() + ".\n\t\tRecursion level: " + recursionLevel
-		    + ".\n\t\tLast array index: " + index+".");
+		    + ".\n\t\tLast array index: " + index + ".");
 	    return;
 	} else if (index >= length) {
 	    if (nStart == length) {
-		sL("Can't find weight: " + tWeight + ". Recursion level: " + recursionLevel+".");
+		sL("Can't find weight: " + tWeight + ". Recursion level: " + recursionLevel + ".");
 		return;
 	    }
 	    resultList.clear();
 	    recursionLevel++;
 	    sL("Index: " + index + ". Weignt: " + weight + ". nStart: " + nStart + ". Check array index: " + arr[index]
-		    + ". Recursion level: " + recursionLevel+".");
+		    + ". Recursion level: " + recursionLevel + ".");
 	    finder(0, ++nStart);
 	} else if (check < tWeight) {
 	    resultList.add(start);
 	    recursionLevel++;
 	    sL("Index: " + index + ". Weignt: " + weight + ". nStart: " + nStart + ". Check array index: " + arr[index]
-		    + ". Recursion level: " + recursionLevel+".");
+		    + ". Recursion level: " + recursionLevel + ".");
 	    finder(check, ++index);
 	} else if (check > tWeight) {
 	    recursionLevel++;
 	    sL("Index: " + index + ". Weignt: " + weight + ". nStart: " + nStart + ". Check array index: " + arr[index]
-		    + ". Recursion level: " + recursionLevel+".");
+		    + ". Recursion level: " + recursionLevel + ".");
 	    finder(weight, ++index);
 	}
 
