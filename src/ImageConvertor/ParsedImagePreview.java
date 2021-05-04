@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Robot;
@@ -23,6 +24,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
 @SuppressWarnings(value = "serial")
@@ -43,12 +45,14 @@ class ParsedImagePreview extends JPanel {
 	 * jDialog.add(this);
 	 * jDialog.setSize(controller.getImageWidth(), controller.getImageHeight());
 	 * jDialog.setVisible(true);
-	 */
+	 */	
 	JFrame j = new JFrame();
-	j.setSize(controller.getImageWidth()+10, controller.getImageHeight()+50);
-	j.add(this);
+	j.setTitle("Preview image");
+	//j.setSize(controller.getImageWidth()+10, controller.getImageHeight()+50);
+	j.setSize(600,600);
 	j.setLocationRelativeTo(null);
-	j.setVisible(true);
+	j.setContentPane(this);	
+	j.setVisible(true);	
     }
 
     @Override
@@ -114,8 +118,8 @@ class ParsedImagePreview extends JPanel {
 
     public void showImage() {
 	BufferedImage img = new BufferedImage(controller.getImageWidth(), controller.getImageHeight(),
-		BufferedImage.TYPE_INT_RGB);
-	Graphics2D g2 = img.createGraphics();
+		BufferedImage.TYPE_INT_RGB);	
+	Graphics2D g2=img.createGraphics();	
 	printAll(g2);
 	g2.dispose();
     }

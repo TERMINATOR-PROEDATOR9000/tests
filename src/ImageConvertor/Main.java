@@ -8,7 +8,7 @@ public class Main {
 	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	} catch (Exception e) {
 	}		
-	new View();	
+	new View();	 
     }
 }
 

@@ -8,8 +8,9 @@ public class ChunkAnalyzer implements Callable<Points> {
     int w1,  h1, w, h, chunkSize;    
     BufferedImage img;
     float luminanceFactor;
+    List<Points>maxPoints;
     
-    public ChunkAnalyzer(int w, int h, int w1, int h1, int chunkSize, BufferedImage img, float luminanceFactor) {
+    public ChunkAnalyzer(int w, int h, int w1, int h1, int chunkSize, BufferedImage img, float luminanceFactor, List<Points>arr) {
 	super();	
 	this.w1=w1;
 	this.h1=h1;
@@ -18,6 +19,7 @@ public class ChunkAnalyzer implements Callable<Points> {
 	this.chunkSize=chunkSize;	
 	this.img=img;
 	this.luminanceFactor=luminanceFactor;
+	maxPoints=arr;
     }   
     @Override
     public Points call() throws Exception {
@@ -31,6 +33,11 @@ public class ChunkAnalyzer implements Callable<Points> {
 	    }
 	}
 	Points max=temp.stream().max((i1,i2)->Integer.compare(i1.getLength(), i2.getLength())).get();
+	if (max.direction != Direction.STUB) {
+	    //System.out.println(max);
+	    maxPoints.add(max);
+	}
+	//System.err.println(maxPoints.size());
 	return max;
     }  
     
@@ -46,7 +53,7 @@ public class ChunkAnalyzer implements Callable<Points> {
 		h = arr[1];
 		points.endW = w;
 		points.endH = h;
-		if (w < startW || w > startW + chunkSize || h < startH || h > startH + chunkSize) {
+		if (w < startW+1 || w > startW+1 + chunkSize || h < startH+1 || h > startH+1 + chunkSize) {
 		    break;
 		}
 		// System.out.println("\t\tsearchMaxline:"+points.endH+"---"+points.endW);

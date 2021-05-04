@@ -103,7 +103,7 @@ abstract class BaseParser {
     }
 
     protected abstract int getChunkSize();
-    protected abstract List<Points> getPointsList();
+    protected abstract List<Points> getPointsList();   
 }
 
 /*

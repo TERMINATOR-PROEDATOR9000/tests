@@ -12,7 +12,7 @@ class PreView extends JPanel {
     int correction, w, h;
 
     public PreView(Controller controller) {
-	this.controller = controller;
+	this.controller = controller;	
 	double width = controller.getImageWidth() / 150;
 	double height = controller.getImageHeight() / 150;
 	correction = (int) Math.max(width, height);

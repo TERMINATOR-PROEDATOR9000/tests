@@ -15,7 +15,7 @@ public class ImageLoader {
     
     Path path=null;
     
-    public BufferedImage loadImage() {		
+    public BufferedImage loadImage() {	
 	
 	JFileChooser jFileChooser = new JFileChooser();
 	

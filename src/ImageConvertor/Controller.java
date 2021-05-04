@@ -17,21 +17,22 @@ public class Controller {
     private float lumfactor;
     private boolean isLoaded = false;
     private ParsedImagePreview parsedImage;
-    private ImageIcon imageIcon; 
+    private ImageIcon imageIcon;
     private String fileName;
     private String figure;
+    private boolean single;
 
     public Controller() {
     }
-    
+
     public void setFigure(String figure) {
 	this.figure = figure;
     }
-    
+
     public String getFigure() {
 	return figure;
     }
-    
+
     public String getFileName() {
 	return fileName;
     }
@@ -51,14 +52,16 @@ public class Controller {
     public void loadImage() {
 	imageLoader = new ImageLoader();
 	bufferedImage = imageLoader.loadImage();
-	if(bufferedImage==null)return;
-	fileName=imageLoader.getPath().getFileName().toString().substring(0, imageLoader.getPath().getFileName().toString().lastIndexOf("."));
+	if (bufferedImage == null)
+	    return;
+	fileName = imageLoader.getPath().getFileName().toString().substring(0,
+		imageLoader.getPath().getFileName().toString().lastIndexOf("."));
 	imageWidth = bufferedImage.getWidth();
 	imageHeight = bufferedImage.getHeight();
-	imageIcon=new ImageIcon(bufferedImage);	
+	imageIcon = new ImageIcon(bufferedImage);
 	isLoaded = true;
     }
-    
+
     public ImageIcon getImageIcon() {
 	return imageIcon;
     }
@@ -67,9 +70,18 @@ public class Controller {
 	return isLoaded;
     }
 
-    public List<Points> getPointsList() {	
-	parser = new ParseImage(bufferedImage, chunkSize, lumfactor);	
-	pointsList = parser.getPointsList();	
+    public List<Points> getPointsList() {
+	//long start = System.currentTimeMillis();	
+	 //parser = new MultiThreadParseImage(bufferedImage, chunkSize, lumfactor);
+	if (single) {
+	    parser = new SingleThreadParseImage(bufferedImage, chunkSize, lumfactor);
+	    //System.err.println("SINGLE controller");
+	} else {
+	    parser = new MultiThreadParseImage(bufferedImage, chunkSize, lumfactor);
+	    //System.err.println("MULTI controller");
+	}
+	pointsList = parser.getPointsList();
+	//System.out.println(System.currentTimeMillis() - start);
 	return pointsList;
     }
 
@@ -94,12 +106,16 @@ public class Controller {
     }
 
     public void showImage() {
-	parsedImage = new ParsedImagePreview(this);	
+	parsedImage = new ParsedImagePreview(this);
 	parsedImage.showImage();
     }
 
     public void saveImage() {
 	parsedImage.saveImage();
     }
+
+    public void setSingle(boolean b) {
+	single = b;
+    }   
 
 }
