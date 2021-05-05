@@ -11,8 +11,8 @@ import java.util.concurrent.Future;
 
 public class MultiThreadParseImage extends BaseParser {
     
-    static final ExecutorService exec= Executors.newCachedThreadPool();
-	   // Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+    static ExecutorService exec= //Executors.newCachedThreadPool();
+	    Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
     List<ChunkAnalyzer> runList = new ArrayList<ChunkAnalyzer>();
     List<Points> results = new CopyOnWriteArrayList<Points>();
     BufferedImage loadedImage;

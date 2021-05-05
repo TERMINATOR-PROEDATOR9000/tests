@@ -138,13 +138,15 @@ class View extends JFrame {
 	single.setToolTipText("Stable. Usually working faster and less system load.");
 	JRadioButton multi = new JRadioButton("Multi");
 	multi.setFocusable(false);
-	multi.setToolTipText("Unstable. Working randomly with high system load.");
-	multi.setSelected(true);
+	multi.setToolTipText("VERY unstable. Working randomly with high system load.");
+	single.setSelected(true);
 	single.addActionListener(e -> {
 	    multi.setSelected(false);
+	    single.setSelected(true);
 	});
 	multi.addActionListener(e -> {
 	    single.setSelected(false);
+	    multi.setSelected(true);
 	});
 	radButPanel.add(single);
 	radButPanel.add(multi);
@@ -195,7 +197,7 @@ class View extends JFrame {
 	    double time=System.currentTimeMillis();
 	    controller.showImage();
 	    workTime=(System.currentTimeMillis()-time)/1000d;
-	    setTitle("Previrw image. Work done for "+workTime);
+	    setTitle("Previrw image. Work done for "+workTime+" seconds.");
 	    saveImage.setEnabled(true);
 	});
 	processImage.setFocusable(false);
@@ -204,7 +206,7 @@ class View extends JFrame {
 	saveImage.setFocusable(false);
 	saveImage.addActionListener(e -> {
 	    controller.saveImage();
-	    setTitle("Saved. Work done for "+workTime);
+	    setTitle("Saved. Work done for "+workTime+" seconds.");
 	    // processImage.setEnabled(false);
 	    // saveImage.setEnabled(false);
 	});
