@@ -2,6 +2,7 @@ package ImageConvertor;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -11,7 +12,7 @@ public class Controller {
     private ImageLoader imageLoader;
     private BufferedImage bufferedImage;
     private BaseParser parser;
-    private List<Points> pointsList;
+    private List<?> pointsList;
     private int chunkSize, imageWidth, imageHeight;
     private float stroke;
     private float lumfactor;
@@ -70,17 +71,18 @@ public class Controller {
 	return isLoaded;
     }
 
-    public List<Points> getPointsList() {
+    public List<?> getPointsList() {
 	//long start = System.currentTimeMillis();	
 	 //parser = new MultiThreadParseImage(bufferedImage, chunkSize, lumfactor);
 	if (single) {
 	    parser = new SingleThreadParseImage(bufferedImage, chunkSize, lumfactor);
+	    pointsList = (List<Points>) parser.getPointsList();
 	    //System.err.println("SINGLE controller");
 	} else {
 	    parser = new MultiThreadParseImage(bufferedImage, chunkSize, lumfactor);
+	    pointsList = (List<Future<Points>>) parser.getPointsList();
 	    //System.err.println("MULTI controller");
-	}
-	pointsList = parser.getPointsList();
+	}	
 	//System.out.println(System.currentTimeMillis() - start);
 	return pointsList;
     }
@@ -117,5 +119,9 @@ public class Controller {
     public void setSingle(boolean b) {
 	single = b;
     }   
+    
+    public boolean isSingle() {
+	return single;
+    }
 
 }

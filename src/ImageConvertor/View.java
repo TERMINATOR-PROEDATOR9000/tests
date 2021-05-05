@@ -135,8 +135,10 @@ class View extends JFrame {
 	JPanel radButPanel = new JPanel();
 	JRadioButton single = new JRadioButton("Single");
 	single.setFocusable(false);
+	single.setToolTipText("Stable. Usually working faster and less system load.");
 	JRadioButton multi = new JRadioButton("Multi");
 	multi.setFocusable(false);
+	multi.setToolTipText("Unstable. Working randomly with high system load.");
 	multi.setSelected(true);
 	single.addActionListener(e -> {
 	    multi.setSelected(false);
@@ -176,7 +178,7 @@ class View extends JFrame {
 	    int chunk = Integer.valueOf(chunkSpinner.getValue().toString());
 	    float stroke = Float.valueOf(jStrokeFactorSpinner.getValue().toString());
 	    float lumfactor = Float.valueOf(jluminesSpiner.getValue().toString());
-	    if (!single.isSelected()) {
+	    if (single.isSelected()) {
 		controller.setSingle(true);
 	    } else {
 		controller.setSingle(false);

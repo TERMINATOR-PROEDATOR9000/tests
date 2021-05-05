@@ -11,14 +11,15 @@ import java.util.concurrent.Future;
 
 public class MultiThreadParseImage extends BaseParser {
     
-    ExecutorService exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+    static final ExecutorService exec= Executors.newCachedThreadPool();
+	   // Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
     List<ChunkAnalyzer> runList = new ArrayList<ChunkAnalyzer>();
     List<Points> results = new CopyOnWriteArrayList<Points>();
     BufferedImage loadedImage;
 
     public MultiThreadParseImage(BufferedImage loadedImage, int chunkSize, float luminanceFactor) {
 	super(loadedImage, chunkSize, luminanceFactor);
-	this.loadedImage = loadedImage;
+	this.loadedImage = loadedImage;	
 	//System.out.println("CREATED MULTI PARSER");
     }
 
@@ -43,32 +44,32 @@ public class MultiThreadParseImage extends BaseParser {
 	return points;
     }
 
-    protected List<Points> search() {	
-
+    protected List<Future<Points>> search() {
 	for (int w = 0; w < width; w += chunkSize) {
 	    for (int h = 0; h < height; h += chunkSize) {
 		runList.add(new ChunkAnalyzer(w, h, w, h, chunkSize, loadedImage, luminanceFactor, results));
 	    }
-	}	
-	List<Future<Points>> secRes;
-	try {
-	    secRes = exec.invokeAll(runList);
-	    exec.shutdownNow();
-	    for (Future<Points> f : secRes) {
+	}
+	List<Future<Points>> secRes=null;
+	try {	    
+	    secRes = exec.invokeAll(runList);       
+	    /*for (Future<Points> f : secRes) {
 		try {
-		    results.add(f.get());
+		    results.add(f.get());		    
 		} catch (InterruptedException e) {
 		    e.printStackTrace();
 		} catch (ExecutionException e) {
 		    e.printStackTrace();
 		}
-	    }
+	    }*/
 	} catch (InterruptedException e1) {
 	    e1.printStackTrace();
 	}	
+	//exec.shutdownNow();	
+	System.gc();	
 	//System.out.println("MULTI end");	
 	//System.gc();	
-	return results;
+	return secRes;
     }
 
     @Override
@@ -76,7 +77,7 @@ public class MultiThreadParseImage extends BaseParser {
 	return chunkSize;
     }
 
-    public List<Points> getPointsList() {
+    public List<Future<Points>> getPointsList() {
 	return search();
     }
 
