@@ -21,14 +21,16 @@ abstract class BaseParser {
     protected StringBuilder sb;
     protected int chunkSize;
     protected float luminanceFactor;
+    protected boolean isDark;
 
-    public BaseParser(BufferedImage img, int chunkSize, float luminanceFactor) {
+    public BaseParser(BufferedImage img, int chunkSize, float luminanceFactor, boolean isDark) {
 	this.img = img;
 	this.sb = new StringBuilder();
 	this.width = img.getWidth();
 	this.height = img.getHeight();
 	this.chunkSize = chunkSize;
-	this.luminanceFactor=luminanceFactor;
+	this.luminanceFactor = luminanceFactor;
+	this.isDark = isDark;
 	sb.append("width: " + width + " height: " + height + "\n");
     }
 
@@ -88,22 +90,31 @@ abstract class BaseParser {
 	}
 
 	int color = img.getRGB(x, y);
-	if((color>>>24)==0x00) {
+	if ((color >>> 24) == 0x00) {
 	    return false;
 	}
 	int red = (color >>> 16) & 0xFF;
 	int green = (color >>> 8) & 0xFF;
 	int blue = (color >>> 0) & 0xFF;
 	float luminance = (red * 0.2126f + green * 0.7152f + blue * 0.0722f) / 255;
-	if (luminance >=this.luminanceFactor /*0.4f*/) {
-	    return false;
+	if (isDark) {
+	    if (luminance >= this.luminanceFactor /* 0.4f */) {
+		return false;
+	    } else {
+		return true;
+	    }
 	} else {
-	    return true;
+	    if (luminance <= this.luminanceFactor /* 0.4f */) {
+		return false;
+	    } else {
+		return true;
+	    }
 	}
     }
 
     protected abstract int getChunkSize();
-    protected abstract List<?> getPointsList();   
+
+    protected abstract List<?> getPointsList();
 }
 
 /*

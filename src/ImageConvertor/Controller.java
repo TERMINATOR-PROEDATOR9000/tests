@@ -21,7 +21,8 @@ public class Controller {
     private ImageIcon imageIcon;
     private String fileName;
     private String figure;
-    private boolean single;
+    private boolean isSingle;
+    private boolean isDark;
 
     public Controller() {
     }
@@ -74,12 +75,12 @@ public class Controller {
     public List<?> getPointsList() {
 	//long start = System.currentTimeMillis();	
 	 //parser = new MultiThreadParseImage(bufferedImage, chunkSize, lumfactor);
-	if (single) {
-	    parser = new SingleThreadParseImage(bufferedImage, chunkSize, lumfactor);
+	if (isSingle) {
+	    parser = new SingleThreadParseImage(bufferedImage, chunkSize, lumfactor, isDark);
 	    pointsList = (List<Points>) parser.getPointsList();
 	    //System.err.println("SINGLE controller");
 	} else {
-	    parser = new MultiThreadParseImage(bufferedImage, chunkSize, lumfactor);
+	    parser = new MultiThreadParseImage(bufferedImage, chunkSize, lumfactor, isDark);
 	    pointsList = (List<Future<Points>>) parser.getPointsList();
 	    //System.err.println("MULTI controller");
 	}	
@@ -117,11 +118,19 @@ public class Controller {
     }
 
     public void setSingle(boolean b) {
-	single = b;
+	isSingle = b;
     }   
     
     public boolean isSingle() {
-	return single;
+	return isSingle;
+    }
+    
+    public void setDark(boolean isDark) {
+	this.isDark = isDark;
+    }
+    
+    public boolean isDark() {
+	return isDark;
     }
 
 }

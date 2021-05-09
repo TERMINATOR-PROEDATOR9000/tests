@@ -18,8 +18,8 @@ class SingleThreadParseImage extends BaseParser {
     List<Points> results = new CopyOnWriteArrayList<Points>();
     BufferedImage loadedImage;
 
-    public SingleThreadParseImage(BufferedImage loadedImage, int chunkSize, float luminanceFactor) {
-	super(loadedImage, chunkSize, luminanceFactor);
+    public SingleThreadParseImage(BufferedImage loadedImage, int chunkSize, float luminanceFactor, boolean isDark) {
+	super(loadedImage, chunkSize, luminanceFactor, isDark);
 	this.loadedImage = loadedImage;
 	//System.out.println("CREATED SINGLE PARSER");
     }

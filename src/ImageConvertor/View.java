@@ -44,7 +44,7 @@ class View extends JFrame {
 
 	JPanel leftContainer = new JPanel();
 	leftContainer.setSize(300, 300);
-	leftContainer.setLayout(new GridLayout(8, 1));
+	leftContainer.setLayout(new GridLayout(9, 1));
 
 	JPanel rightContainer = new JPanel();
 	rightContainer.setLayout(new CardLayout());
@@ -153,6 +153,34 @@ class View extends JFrame {
 	parserChoser.add(parserChoserText);
 	parserChoser.add(radButPanel);
 
+	JPanel lumChooser = new JPanel(new GridLayout(1, 2));
+	JTextField lumChooserText = new JTextField("Detecting pixels: ");
+	lumChooserText.setToolTipText("Dark or light pixels");
+	lumChooserText.setEditable(false);
+	lumChooserText.setFocusable(false);
+	lumChooserText.setBorder(null);
+	lumChooserText.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+	JPanel radButPanelLum = new JPanel();
+	JRadioButton dark = new JRadioButton("Dark");
+	dark.setFocusable(false);
+	dark.setToolTipText("Search dark pixels.");
+	JRadioButton light = new JRadioButton("Light");
+	light.setFocusable(false);
+	light.setToolTipText("Search light pixels.");
+	dark.setSelected(true);
+	dark.addActionListener(e -> {
+	    light.setSelected(false);
+	    dark.setSelected(true);
+	});
+	light.addActionListener(e -> {
+	    dark.setSelected(false);
+	    light.setSelected(true);
+	});
+	radButPanelLum.add(dark);
+	radButPanelLum.add(light);
+	lumChooser.add(lumChooserText);
+	lumChooser.add(radButPanelLum);
+
 	JButton processImage = new JButton("process image");
 	JButton imageChooser = new JButton("choose image");
 	JButton saveImage = new JButton("save image");
@@ -194,10 +222,15 @@ class View extends JFrame {
 	    } else {
 		setTitle("Working with multithread parser");
 	    }
-	    double time=System.currentTimeMillis();
+	    if (dark.isSelected()) {
+		controller.setDark(true);
+	    } else {
+		controller.setDark(false);
+	    }
+	    double time = System.currentTimeMillis();
 	    controller.showImage();
-	    workTime=(System.currentTimeMillis()-time)/1000d;
-	    setTitle("Previrw image. Work done for "+workTime+" seconds.");
+	    workTime = (System.currentTimeMillis() - time) / 1000d;
+	    setTitle("Previrw image. Work done for " + workTime + " seconds.");
 	    saveImage.setEnabled(true);
 	});
 	processImage.setFocusable(false);
@@ -206,7 +239,7 @@ class View extends JFrame {
 	saveImage.setFocusable(false);
 	saveImage.addActionListener(e -> {
 	    controller.saveImage();
-	    setTitle("Saved. Work done for "+workTime+" seconds.");
+	    setTitle("Saved. Work done for " + workTime + " seconds.");
 	    // processImage.setEnabled(false);
 	    // saveImage.setEnabled(false);
 	});
@@ -215,6 +248,7 @@ class View extends JFrame {
 	leftContainer.add(strokeFactor);
 	leftContainer.add(lumines);
 	leftContainer.add(chooseFigure);
+	leftContainer.add(lumChooser);
 	leftContainer.add(parserChoser);
 
 	leftContainer.add(imageChooser);

@@ -17,8 +17,8 @@ public class MultiThreadParseImage extends BaseParser {
     List<Points> results = new CopyOnWriteArrayList<Points>();
     BufferedImage loadedImage;
 
-    public MultiThreadParseImage(BufferedImage loadedImage, int chunkSize, float luminanceFactor) {
-	super(loadedImage, chunkSize, luminanceFactor);
+    public MultiThreadParseImage(BufferedImage loadedImage, int chunkSize, float luminanceFactor, boolean isDark) {
+	super(loadedImage, chunkSize, luminanceFactor, isDark);
 	this.loadedImage = loadedImage;	
 	//System.out.println("CREATED MULTI PARSER");
     }
@@ -47,7 +47,7 @@ public class MultiThreadParseImage extends BaseParser {
     protected List<Future<Points>> search() {
 	for (int w = 0; w < width; w += chunkSize) {
 	    for (int h = 0; h < height; h += chunkSize) {
-		runList.add(new ChunkAnalyzer(w, h, w, h, chunkSize, loadedImage, luminanceFactor, results));
+		runList.add(new ChunkAnalyzer(w, h, w, h, chunkSize, loadedImage, luminanceFactor, results, isDark));
 	    }
 	}
 	List<Future<Points>> secRes=null;

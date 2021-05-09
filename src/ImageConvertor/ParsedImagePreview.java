@@ -22,6 +22,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,11 +35,12 @@ class ParsedImagePreview extends JPanel {
 
     Controller controller;
     List<?> forDraw;
-    int s;
+    Integer s;
     String figure;
+    JFrame j;
 
-    public ParsedImagePreview(Controller controller) {
-	this.controller = controller;
+    public ParsedImagePreview(Controller controllerr) {
+	controller = controllerr;
 	forDraw = controller.getPointsList();
 	s = controller.getChunkSize();
 	figure = controller.getFigure();
@@ -48,15 +50,17 @@ class ParsedImagePreview extends JPanel {
 	 * jDialog.setSize(controller.getImageWidth(), controller.getImageHeight());
 	 * jDialog.setVisible(true);
 	 */
-	JFrame j = new JFrame();
+	j = new JFrame();
 	j.setTitle("Preview image");
 	// j.setSize(controller.getImageWidth()+10, controller.getImageHeight()+50);
 	j.setSize(600, 600);
 	j.setLocationRelativeTo(null);
-	j.setContentPane(this);
-	j.setVisible(true);
+	//j.setContentPane(this);
+	//j.add(this);
+	//j.setVisible(true);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void paintComponent(Graphics g) {
 	super.paintComponent(g);
@@ -131,10 +135,14 @@ class ParsedImagePreview extends JPanel {
 
     public void showImage() {
 	BufferedImage img = new BufferedImage(controller.getImageWidth(), controller.getImageHeight(),
-		BufferedImage.TYPE_INT_RGB);
-	Graphics2D g2 = img.createGraphics();
-	printAll(g2);
-	g2.dispose();
+		BufferedImage.TYPE_INT_RGB);		
+	Graphics2D g2 = img.createGraphics();	
+	//printAll(g2);
+	//g2.dispose();
+	
+	
+	j.add(this);
+	j.setVisible(true);	
     }
 
     public void saveImage() {
@@ -148,13 +156,13 @@ class ParsedImagePreview extends JPanel {
 	    String resFileName = controller.getFileName() + "_";
 	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss", Locale.ENGLISH);
 	    resFileName += sdf.format(new Date()).toString();
-	    Path s = Paths.get(View.HOME.toString() + "\\" + resFileName + ".jpg");
+	    Path s = Paths.get(View.HOME.toString() + "\\" + resFileName + ".png");
 	    // System.out.println(s);
 
 	    Files.deleteIfExists(s);
 	    Files.createFile(s);
 
-	    ImageIO.write(img, "jpg", s.toFile());
+	    ImageIO.write(img, "png", s.toFile());
 	    // System.out.println("writed");
 	} catch (Exception e) {
 	    e.printStackTrace();
