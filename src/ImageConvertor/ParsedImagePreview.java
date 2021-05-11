@@ -1,15 +1,10 @@
 package ImageConvertor;
 
-import java.awt.AWTException;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Robot;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,13 +17,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
+
 
 @SuppressWarnings(value = "serial")
 class ParsedImagePreview extends JPanel {
@@ -63,7 +54,7 @@ class ParsedImagePreview extends JPanel {
     @SuppressWarnings("unchecked")
     @Override
     public void paintComponent(Graphics g) {
-	super.paintComponent(g);
+	super.paintComponent(g);	
 	Graphics2D g2 = (Graphics2D) g;
 	g2.setStroke(new BasicStroke(controller.getStroke()));	
 	    for (Object ppp : forDraw) {
@@ -87,7 +78,7 @@ class ParsedImagePreview extends JPanel {
 		int x2;// = pp.endW;
 		int y2;// = pp.endH;
 
-		if (pp.getLength() >= s - 1) {
+		if (controller.isRandom()&&pp.getLength() >= s - 1) {
 		    x1 = ThreadLocalRandom.current().nextInt(pp.startW - s, pp.startW + s);
 		    y1 = ThreadLocalRandom.current().nextInt(pp.startH - s, pp.startH + s);
 		    x2 = ThreadLocalRandom.current().nextInt(pp.endW - s, pp.endW + s);
@@ -134,21 +125,21 @@ class ParsedImagePreview extends JPanel {
     }
 
     public void showImage() {
-	BufferedImage img = new BufferedImage(controller.getImageWidth(), controller.getImageHeight(),
-		BufferedImage.TYPE_INT_RGB);		
-	Graphics2D g2 = img.createGraphics();	
+	//BufferedImage img = new BufferedImage(controller.getImageWidth(), controller.getImageHeight(),
+	//	BufferedImage.TYPE_INT_ARGB);		
+	//Graphics2D g2 = img.createGraphics();	
 	//printAll(g2);
-	//g2.dispose();
-	
-	
+	//g2.dispose();	
 	j.add(this);
 	j.setVisible(true);	
     }
 
     public void saveImage() {
 	BufferedImage img = new BufferedImage(controller.getImageWidth(), controller.getImageHeight(),
-		BufferedImage.TYPE_INT_RGB);
+		BufferedImage.TYPE_INT_ARGB);
 	Graphics2D g2 = img.createGraphics();
+	//g2.setComposite(AlphaComposite.Clear);
+	//g2.fillRect(0, 0, controller.getImageWidth(), controller.getImageHeight());
 	setSize(controller.getImageWidth(), controller.getImageHeight());
 	printAll(g2);
 	g2.dispose();

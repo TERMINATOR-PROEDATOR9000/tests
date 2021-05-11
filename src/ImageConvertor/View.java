@@ -5,9 +5,9 @@ import java.awt.CardLayout;
 import java.awt.GridLayout;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,7 +28,7 @@ class View extends JFrame {
     public View() {
 	super();
 	init();
-	setSize(600, 300);
+	setSize(600, 340);
 	setResizable(false);
 	// setLayout(null);
 	setTitle("ImageConvertor");
@@ -44,7 +44,7 @@ class View extends JFrame {
 
 	JPanel leftContainer = new JPanel();
 	leftContainer.setSize(300, 300);
-	leftContainer.setLayout(new GridLayout(9, 1));
+	leftContainer.setLayout(new GridLayout(10, 1));
 
 	JPanel rightContainer = new JPanel();
 	rightContainer.setLayout(new CardLayout());
@@ -180,6 +180,23 @@ class View extends JFrame {
 	radButPanelLum.add(light);
 	lumChooser.add(lumChooserText);
 	lumChooser.add(radButPanelLum);
+	
+	JPanel rndChooser = new JPanel(new GridLayout(1, 2));
+	JTextField rndChooserText = new JTextField("Random for draw:");
+	rndChooserText.setToolTipText("Random for pixels");
+	rndChooserText.setEditable(false);
+	rndChooserText.setFocusable(false);
+	rndChooserText.setBorder(null);
+	rndChooserText.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+	JPanel rndChooserPan = new JPanel();	
+	JCheckBox randChoose=new JCheckBox("Use");
+	randChoose.setFocusable(false);
+	randChoose.setSelected(true);
+	randChoose.setToolTipText("Use random for draw image.");
+	
+	rndChooserPan.add(randChoose);
+	rndChooser.add(rndChooserText);
+	rndChooser.add(rndChooserPan);
 
 	JButton processImage = new JButton("process image");
 	JButton imageChooser = new JButton("choose image");
@@ -217,6 +234,7 @@ class View extends JFrame {
 	    controller.setStroke(stroke);
 	    controller.setLumfactor(lumfactor);
 	    controller.setFigure(figSpinner.getValue().toString());
+	    controller.setRandom(randChoose.isSelected());
 	    if (single.isSelected()) {
 		setTitle("Working with singlethread parser");
 	    } else {
@@ -250,6 +268,7 @@ class View extends JFrame {
 	leftContainer.add(chooseFigure);
 	leftContainer.add(lumChooser);
 	leftContainer.add(parserChoser);
+	leftContainer.add(rndChooser);
 
 	leftContainer.add(imageChooser);
 	leftContainer.add(processImage);

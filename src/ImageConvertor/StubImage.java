@@ -4,7 +4,6 @@ import java.awt.Graphics;
 import java.util.Base64;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -19,6 +18,6 @@ class StubImage extends JPanel{
     @Override
     public void paintComponent(Graphics g) {
 	super.paintComponent(g);
-	g.drawImage(getStubImage().getImage(), 22, 0, 256, 256, null);
+	g.drawImage(getStubImage().getImage(), 22, 24, 256, 256, null);
     }
 }

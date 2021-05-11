@@ -23,6 +23,7 @@ public class Controller {
     private String figure;
     private boolean isSingle;
     private boolean isDark;
+    private boolean useRandom;
 
     public Controller() {
     }
@@ -131,6 +132,14 @@ public class Controller {
     
     public boolean isDark() {
 	return isDark;
+    }
+    
+    public boolean isRandom() {
+	return useRandom;
+    }
+    
+    public void setRandom(boolean useRandom) {
+	this.useRandom=useRandom;
     }
 
 }
