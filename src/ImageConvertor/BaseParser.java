@@ -1,80 +1,79 @@
 package ImageConvertor;
 
 import java.awt.image.BufferedImage;
-
-import java.io.IOException;
-import java.nio.file.Files;
-
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 abstract class BaseParser {
 
     protected BufferedImage img;
-    protected int width;
-    protected int height;
-    protected StringBuilder sb;
-    protected int chunkSize;
-    protected float luminanceFactor;
-    protected boolean isDark;
-
-    public BaseParser(BufferedImage img, int chunkSize, float luminanceFactor, boolean isDark) {
-	this.img = img;
-	this.sb = new StringBuilder();
-	this.width = img.getWidth();
-	this.height = img.getHeight();
-	this.chunkSize = chunkSize;
-	this.luminanceFactor = luminanceFactor;
-	this.isDark = isDark;
-	sb.append("width: " + width + " height: " + height + "\n");
+    protected short width;
+    protected short height;
+    // protected StringBuilder sb;
+    protected short chunkSize;
+    protected float minLum, maxLum;
+    protected int layer;
+    protected Controller c;
+    
+    public void setMinLum(float minLum) {
+	this.minLum = minLum;
+    }
+    public void setMaxLum(float maxLum) {
+	this.maxLum = maxLum;
     }
 
-    protected int[] getDirection(int w, int h, Direction direction) {
-	int result[] = { -2, -2 };
+    public BaseParser(Controller c) {
+	this.c = c;
+	this.img = c.getBufferedImage();
+	// this.sb = new StringBuilder();
+	this.width = (short) img.getWidth();
+	this.height = (short) img.getHeight();
+	this.chunkSize = c.getChunkSize();
+	this.maxLum = c.getMaxLum();
+	this.minLum = c.getMinLum();
+	// sb.append("width: " + width + " height: " + height + "\n");
+    }
+
+    protected short[] getDirection(short w, short h, Direction direction) {
+	short result[] = { -2, -2 };
 	switch (direction) {
 	case DOWN: {
 	    result[0] = w;
-	    result[1] = h + 1;
+	    result[1] = (short) (h + 1);
 	    return result;
 	}
 	case UP: {
 	    result[0] = w;
-	    result[1] = h - 1;
+	    result[1] = (short) (h - 1);
 	    return result;
 	}
 	case LEFT: {
-	    result[0] = w - 1;
+	    result[0] = (short) (w - 1);
 	    result[1] = h;
 	    return result;
 	}
 	case RIGHT: {
-	    result[0] = w + 1;
+	    result[0] = (short) (w + 1);
 	    result[1] = h;
 	    return result;
 	}
 	case LEFT_UP: {
-	    result[0] = w - 1;
-	    result[1] = h - 1;
+	    result[0] = (short) (w - 1);
+	    result[1] = (short) (h - 1);
 	    return result;
 	}
 	case RIGHT_DOWN: {
-	    result[0] = w + 1;
-	    result[1] = h + 1;
+	    result[0] = (short) (w + 1);
+	    result[1] = (short) (h + 1);
 	    return result;
 	}
 	case LEFT_DOWN: {
-	    result[0] = w - 1;
-	    result[1] = h + 1;
+	    result[0] = (short) (w - 1);
+	    result[1] = (short) (h + 1);
 	    return result;
 	}
 	case RIGHT_UP: {
-	    result[0] = w + 1;
-	    result[1] = h - 1;
+	    result[0] = (short) (w + 1);
+	    result[1] = (short) (h - 1);
 	    return result;
 	}
 
@@ -82,10 +81,10 @@ abstract class BaseParser {
 	return null;
     }
 
-    protected boolean isBlackPixel(int x, int y) {
+    protected boolean isBlackPixel(short x, short y) {
 
 	if (x > width - 1 || y > height - 1 || x < 0 || y < 0) {
-	    sb.append("Out of bounds when check. return...\n");
+	    // sb.append("Out of bounds when check. return...\n");
 	    return false;
 	}
 
@@ -97,22 +96,28 @@ abstract class BaseParser {
 	int green = (color >>> 8) & 0xFF;
 	int blue = (color >>> 0) & 0xFF;
 	float luminance = (red * 0.2126f + green * 0.7152f + blue * 0.0722f) / 255;
-	if (isDark) {
-	    if (luminance >= this.luminanceFactor /* 0.4f */) {
-		return false;
-	    } else {
-		return true;
-	    }
+	if (luminance >= minLum && luminance <= maxLum) {
+	    /*
+	     * if (luminance >= this.luminanceFactor ) {
+	     * return false;
+	     * } else {
+	     * return true;
+	     * }
+	     * } else {
+	     * if (luminance <= this.luminanceFactor ) {
+	     * return false;
+	     * } else {
+	     * return true;
+	     * }
+	     * }
+	     */
+	    return true;
 	} else {
-	    if (luminance <= this.luminanceFactor /* 0.4f */) {
-		return false;
-	    } else {
-		return true;
-	    }
+	    return false;
 	}
     }
 
-    protected abstract int getChunkSize();
+    protected abstract short getChunkSize();
 
     protected abstract List<?> getPointsList();
 }
@@ -126,13 +131,13 @@ abstract class BaseParser {
  * return maxPoints;
  * }
  * 
- * protected Points searchMaxLine(int w, int h, Direction direction, Points
+ * protected Points searchMaxLine(short w, short h, Direction direction, Points
  * points) {
  * // System.out.println(isBlackPixel(w, h));
  * // System.out.println(points.chunkW+" "+points.chunkH);
  * // System.out.println("searchMaxLine: "+w + "---" + h);
- * int[] tempArr;// = getDirection(w, h, direction);
- * int check = 0;
+ * short[] tempArr;// = getDirection(w, h, direction);
+ * short check = 0;
  * while (isBlackPixel(w, h)) {
  * check++;
  * // System.out.println("searchMaxLine: "+w + "---" + h);
@@ -168,12 +173,13 @@ abstract class BaseParser {
  * return points;
  * }
  * 
- * protected void search(int w, int h, Direction direction, int chW, int chH) {
+ * protected void search(short w, short h, Direction direction, short chW, short
+ * chH) {
  * sb.append("called... \t" + w + " <--x\ty--> " + h + "\n");
  * List<Points> temp = new ArrayList<Points>();
  * // System.out.println("search: W "+w + "---H " + h);
- * for (int dW = w; dW < (w + 16); dW++) {
- * for (int dH = h; dH < (h + 16); dH++) {
+ * for (short dW = w; dW < (w + 16); dW++) {
+ * for (short dH = h; dH < (h + 16); dH++) {
  * // System.err.println("search: dw " + dW + " dh " + dH);
  * if (isBlackPixel(dW, dH)) {
  * Points p = new Points();
@@ -208,9 +214,9 @@ abstract class BaseParser {
  * public void init() {
  * System.out.println("Image resolution: " + img.getWidth() + "x" +
  * img.getHeight());
- * int chW = 1, chH = 1;
- * for (int w = 0; w < width; w += 16) {
- * for (int h = 0; h < height; h += 16) {
+ * short chW = 1, chH = 1;
+ * for (short w = 0; w < width; w += 16) {
+ * for (short h = 0; h < height; h += 16) {
  * search(w, h, Direction.RIGHT, chW, chH);
  * search(w, h, Direction.RIGHT_DOWN, chW, chH);
  * search(w, h, Direction.DOWN, chW, chH);

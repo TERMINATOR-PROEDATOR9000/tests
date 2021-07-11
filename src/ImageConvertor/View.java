@@ -1,15 +1,17 @@
 package ImageConvertor;
 
 import java.awt.CardLayout;
-
 import java.awt.GridLayout;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
@@ -28,23 +30,19 @@ class View extends JFrame {
     public View() {
 	super();
 	init();
-	setSize(600, 340);
+	setSize(600, 335);
 	setResizable(false);
 	// setLayout(null);
-	setTitle("ImageConvertor");
+	setTitle("ImageConvertor v5");
 	setLocationRelativeTo(null);
 	setDefaultCloseOperation(EXIT_ON_CLOSE);
 	setVisible(true);
     }
 
-    private void init() {
+    private void init() {	
 
 	JPanel mainContainer = new JPanel();
-	mainContainer.setLayout(new GridLayout(1, 2));
-
-	JPanel leftContainer = new JPanel();
-	leftContainer.setSize(300, 300);
-	leftContainer.setLayout(new GridLayout(10, 1));
+	mainContainer.setLayout(new GridLayout(1, 2));		
 
 	JPanel rightContainer = new JPanel();
 	rightContainer.setLayout(new CardLayout());
@@ -81,7 +79,7 @@ class View extends JFrame {
 	jStrokeFactor.setFocusable(false);
 	jStrokeFactor.setBorder(null);
 	jStrokeFactor.setEditable(false);
-	JSpinner jStrokeFactorSpinner = new JSpinner(new SpinnerNumberModel(1f, 0.1f, 5f, 0.1f));
+	JSpinner jStrokeFactorSpinner = new JSpinner(new SpinnerNumberModel(1f, 0.0f, 5f, 0.5f));
 	jStrokeFactorSpinner.setBorder(null);
 	JComponent jStrokeFactorSpinnerComp = jStrokeFactorSpinner.getEditor();
 	JSpinner.DefaultEditor strokeSpinnerEditor = (JSpinner.DefaultEditor) jStrokeFactorSpinnerComp;
@@ -90,23 +88,59 @@ class View extends JFrame {
 	strokeFactor.add(jStrokeFactor);
 	strokeFactor.add(jStrokeFactorSpinner);
 
-	JPanel lumines = new JPanel();
+	/*JPanel lumines = new JPanel();
 	lumines.setLayout(new GridLayout(1, 2));
 	JTextField jLumines = new JTextField("Lumines:");
-	jLumines.setToolTipText("Maximum: 4");
+	jLumines.setToolTipText("Maximum: 1");
 	jLumines.setHorizontalAlignment((int) CENTER_ALIGNMENT);
 	jLumines.setFocusable(false);
 	jLumines.setEditable(false);
 	jLumines.setBorder(null);
 
-	JSpinner jluminesSpiner = new JSpinner(new SpinnerNumberModel(0.2, 0, 4f, 0.01f));
-	jluminesSpiner.setBorder(null);
-	JComponent jLumFactorSpinner = jluminesSpiner.getEditor();
+	JSpinner minLum = new JSpinner(new SpinnerNumberModel(0, 0, 1f, 0.01f));
+	minLum.setToolTipText("Minimal luminal pixel");
+	minLum.setBorder(null);
+	JComponent jLumFactorSpinner = minLum.getEditor();
 	JSpinner.DefaultEditor lumSpinnerEditor = (JSpinner.DefaultEditor) jLumFactorSpinner;
 	lumSpinnerEditor.getTextField().setEditable(false);
 	lumSpinnerEditor.getTextField().setHorizontalAlignment(JTextField.CENTER);
 	lumines.add(jLumines);
-	lumines.add(jluminesSpiner);
+	lumines.add(minLum);
+	
+	JSpinner maxLum = new JSpinner(new SpinnerNumberModel(0.2, 0, 1f, 0.01f));
+	maxLum.setBorder(null);
+	maxLum.setToolTipText("Maximal luminal pixel");
+	JComponent maxLumEditor = maxLum.getEditor();
+	JSpinner.DefaultEditor maxLumSpinerEditor = (JSpinner.DefaultEditor) maxLumEditor;
+	maxLumSpinerEditor.getTextField().setEditable(false);
+	maxLumSpinerEditor.getTextField().setHorizontalAlignment(JTextField.CENTER);	
+	
+	JPanel lumPanel=new JPanel();
+	lumPanel.setLayout(new GridLayout(1,2));
+	lumPanel.add(minLum);
+	lumPanel.add(maxLum);
+	lumines.add(jLumines);
+	lumines.add(lumPanel);*/
+	
+	JPanel layers=new JPanel();
+	layers.setLayout(new GridLayout(1,2));
+	
+	JTextField layersText=new JTextField("Layers:");
+	layersText.setToolTipText("Layers count");
+	layersText.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+	layersText.setFocusable(false);
+	layersText.setEditable(false);
+	layersText.setBorder(null);
+	
+	JSpinner layerSpinner = new JSpinner(new SpinnerNumberModel(10, 1, 30, 1));
+	layerSpinner.setToolTipText("Minimal luminal pixel");
+	layerSpinner.setBorder(null);
+	JComponent layerSpinnerEditor = layerSpinner.getEditor();
+	JSpinner.DefaultEditor lumSpinnerEditor = (JSpinner.DefaultEditor) layerSpinnerEditor;
+	lumSpinnerEditor.getTextField().setEditable(false);
+	lumSpinnerEditor.getTextField().setHorizontalAlignment(JTextField.CENTER);
+	layers.add(layersText);
+	layers.add(layerSpinner);
 
 	JPanel chooseFigure = new JPanel(new GridLayout(1, 2));
 	JTextField textFigure = new JTextField("Figure: ");
@@ -138,6 +172,7 @@ class View extends JFrame {
 	single.setToolTipText("Stable. Usually working faster and less system load.");
 	JRadioButton multi = new JRadioButton("Multi");
 	multi.setFocusable(false);
+	multi.setEnabled(false);
 	multi.setToolTipText("VERY unstable. Working randomly with high system load.");
 	single.setSelected(true);
 	single.addActionListener(e -> {
@@ -152,34 +187,6 @@ class View extends JFrame {
 	radButPanel.add(multi);
 	parserChoser.add(parserChoserText);
 	parserChoser.add(radButPanel);
-
-	JPanel lumChooser = new JPanel(new GridLayout(1, 2));
-	JTextField lumChooserText = new JTextField("Detecting pixels: ");
-	lumChooserText.setToolTipText("Dark or light pixels");
-	lumChooserText.setEditable(false);
-	lumChooserText.setFocusable(false);
-	lumChooserText.setBorder(null);
-	lumChooserText.setHorizontalAlignment((int) CENTER_ALIGNMENT);
-	JPanel radButPanelLum = new JPanel();
-	JRadioButton dark = new JRadioButton("Dark");
-	dark.setFocusable(false);
-	dark.setToolTipText("Search dark pixels.");
-	JRadioButton light = new JRadioButton("Light");
-	light.setFocusable(false);
-	light.setToolTipText("Search light pixels.");
-	dark.setSelected(true);
-	dark.addActionListener(e -> {
-	    light.setSelected(false);
-	    dark.setSelected(true);
-	});
-	light.addActionListener(e -> {
-	    dark.setSelected(false);
-	    light.setSelected(true);
-	});
-	radButPanelLum.add(dark);
-	radButPanelLum.add(light);
-	lumChooser.add(lumChooserText);
-	lumChooser.add(radButPanelLum);
 	
 	JPanel rndChooser = new JPanel(new GridLayout(1, 2));
 	JTextField rndChooserText = new JTextField("Random for draw:");
@@ -224,26 +231,28 @@ class View extends JFrame {
 	processImage.addActionListener(e -> {
 	    int chunk = Integer.valueOf(chunkSpinner.getValue().toString());
 	    float stroke = Float.valueOf(jStrokeFactorSpinner.getValue().toString());
-	    float lumfactor = Float.valueOf(jluminesSpiner.getValue().toString());
+	   /* float lumfactorMin = Float.valueOf(minLum.getValue().toString());
+	    float lumfactorMax = Float.valueOf(maxLum.getValue().toString());
+	    if(lumfactorMax<=lumfactorMin) {
+		JOptionPane.showMessageDialog(this, "Min lum cant be greater than min lum!", "Error", JOptionPane.ERROR_MESSAGE);		
+		return;
+	    }
+	    controller.setMaxLum(lumfactorMax);
+	    controller.setMinLum(lumfactorMin);*/
+	    controller.setLayers(Integer.valueOf(layerSpinner.getValue().toString()));
 	    if (single.isSelected()) {
 		controller.setSingle(true);
 	    } else {
 		controller.setSingle(false);
 	    }
-	    controller.setChunkSize(chunk);
+	    controller.setChunkSize((short) chunk);
 	    controller.setStroke(stroke);
-	    controller.setLumfactor(lumfactor);
 	    controller.setFigure(figSpinner.getValue().toString());
 	    controller.setRandom(randChoose.isSelected());
 	    if (single.isSelected()) {
 		setTitle("Working with singlethread parser");
 	    } else {
 		setTitle("Working with multithread parser");
-	    }
-	    if (dark.isSelected()) {
-		controller.setDark(true);
-	    } else {
-		controller.setDark(false);
 	    }
 	    double time = System.currentTimeMillis();
 	    controller.showImage();
@@ -258,21 +267,38 @@ class View extends JFrame {
 	saveImage.addActionListener(e -> {
 	    controller.saveImage();
 	    setTitle("Saved. Work done for " + workTime + " seconds.");
-	    // processImage.setEnabled(false);
-	    // saveImage.setEnabled(false);
-	});
-
-	leftContainer.add(chunkSize);
+	});	
+	
+	List<JComponent> components =new ArrayList<JComponent>();
+	
+	components.add(chunkSize);
+	components.add(strokeFactor);
+	//compontnes.add(lumines);
+	components.add(layers);
+	components.add(chooseFigure);
+	components.add(parserChoser);
+	components.add(rndChooser);
+	components.add(imageChooser);
+	components.add(processImage);
+	components.add(saveImage);
+	
+	JPanel leftContainer = new JPanel();
+	leftContainer.setSize(300, 300);	
+	leftContainer.setLayout(new GridLayout(components.size(), 1));
+	for(JComponent j:components) {
+	   leftContainer.add(j);
+	}
+	
+	/*leftContainer.add(chunkSize);
 	leftContainer.add(strokeFactor);
 	leftContainer.add(lumines);
 	leftContainer.add(chooseFigure);
-	leftContainer.add(lumChooser);
 	leftContainer.add(parserChoser);
 	leftContainer.add(rndChooser);
 
 	leftContainer.add(imageChooser);
 	leftContainer.add(processImage);
-	leftContainer.add(saveImage);
+	leftContainer.add(saveImage);*/
 
 	mainContainer.add(leftContainer);
 	mainContainer.add(rightContainer);

@@ -3,8 +3,6 @@ package ImageConvertor;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -14,17 +12,17 @@ public class MultiThreadParseImage extends BaseParser {
     static ExecutorService exec= //Executors.newCachedThreadPool();
 	    Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
     List<ChunkAnalyzer> runList = new ArrayList<ChunkAnalyzer>();
-    List<Points> results = new CopyOnWriteArrayList<Points>();
+    List<Points> results = new ArrayList<Points>();
     BufferedImage loadedImage;
 
-    public MultiThreadParseImage(BufferedImage loadedImage, int chunkSize, float luminanceFactor, boolean isDark) {
-	super(loadedImage, chunkSize, luminanceFactor, isDark);
+    public MultiThreadParseImage(Controller c) {
+	super(c);
 	this.loadedImage = loadedImage;	
 	//System.out.println("CREATED MULTI PARSER");
     }
 
-    protected Points searchMaxLine(int w, int h, Direction direction, Points points, int startW, int startH) {
-	int[] arr = getDirection(w, h, direction);
+    protected Points searchMaxLine(short w, short h, Direction direction, Points points, short startW, short startH) {
+	short[] arr = getDirection(w, h, direction);
 	if (isBlackPixel(w, h)) {
 	    points.startH = h;
 	    points.startW = w;
@@ -44,10 +42,11 @@ public class MultiThreadParseImage extends BaseParser {
 	return points;
     }
 
-    protected List<Future<Points>> search() {
-	for (int w = 0; w < width; w += chunkSize) {
-	    for (int h = 0; h < height; h += chunkSize) {
-		runList.add(new ChunkAnalyzer(w, h, w, h, chunkSize, loadedImage, luminanceFactor, results, isDark));
+    protected List<Future<Points>> search() {	
+	for (short w = 0; w < width; w += chunkSize) {
+	    for (short h = 0; h < height; h += chunkSize) {
+		runList.add(new ChunkAnalyzer(w, h, w, h, chunkSize, loadedImage, minLum, maxLum, results));
+		//runList.add(new ChunkAnalyzer(h, chunkSize, loadedImage, minLum, maxLum, results));
 	    }
 	}
 	List<Future<Points>> secRes=null;
@@ -73,11 +72,11 @@ public class MultiThreadParseImage extends BaseParser {
     }
 
     @Override
-    public int getChunkSize() {
+    public short getChunkSize() {
 	return chunkSize;
     }
 
-    public List<Future<Points>> getPointsList() {
+    public List<Future<Points>> getPointsList() {	
 	return search();
     }
 

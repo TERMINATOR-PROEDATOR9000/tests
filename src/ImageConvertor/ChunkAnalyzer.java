@@ -3,16 +3,17 @@ package ImageConvertor;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChunkAnalyzer implements Callable<Points> {
-    int w1, h1, w, h, chunkSize;
+    short w1, h1, w, h, chunkSize;
     BufferedImage img;
-    float luminanceFactor;
+    float minLum, maxLum;
     List<Points> maxPoints;
-    boolean isDark;
+    static AtomicInteger thread=new AtomicInteger();
 
-    public ChunkAnalyzer(int w, int h, int w1, int h1, int chunkSize, BufferedImage img, float luminanceFactor,
-	    List<Points> arr, boolean isDark) {
+    public ChunkAnalyzer(short w, short h, short w1, short h1, short chunkSize, BufferedImage img, float minLum, float maxlum,
+	    List<Points> arr) {
 	super();
 	this.w1 = w1;
 	this.h1 = h1;
@@ -20,14 +21,15 @@ public class ChunkAnalyzer implements Callable<Points> {
 	this.h = h;
 	this.chunkSize = chunkSize;
 	this.img = img;
-	this.luminanceFactor = luminanceFactor;
-	this.isDark = isDark;
+	this.minLum = minLum;
+	this.maxLum = maxlum;
 	maxPoints = arr;
     }
 
     @Override
     public Points call() throws Exception {
 	List<Points> temp = new ArrayList<Points>();
+	//System.out.println("w1 "+w1+" chunkSize "+chunkSize+" sum "+(w1+chunkSize)+" thread "+Thread.currentThread());
 	for (; w < (w1 + chunkSize); w++) {
 	    for (; h < (h1 + chunkSize); h++) {
 		temp.add(searchMaxLine(w, h, Direction.RIGHT, new Points(), w1, h1));
@@ -41,12 +43,13 @@ public class ChunkAnalyzer implements Callable<Points> {
 	    // System.out.println(max);
 	    maxPoints.add(max);
 	}
+	temp.clear();
 	// System.err.println(maxPoints.size());
 	return max;
     }
 
-    protected Points searchMaxLine(int w, int h, Direction direction, Points points, int startW, int startH) {
-	int[] arr = getDirection(w, h, direction);
+    protected Points searchMaxLine(short w, short h, Direction direction, Points points, short startW, short startH) {
+	short[] arr = getDirection(w, h, direction);
 	if (isBlackPixel(w, h)) {
 	    points.startH = h;
 	    points.startW = w;
@@ -70,47 +73,47 @@ public class ChunkAnalyzer implements Callable<Points> {
 	return points;
     }
 
-    protected int[] getDirection(int w, int h, Direction direction) {
-	int result[] = { -2, -2 };
+    protected short[] getDirection(short w, short h, Direction direction) {
+	short result[] = { -2, -2 };
 	switch (direction) {
 	case DOWN: {
 	    result[0] = w;
-	    result[1] = h + 1;
+	    result[1] = (short) (h + 1);
 	    return result;
 	}
 	case UP: {
 	    result[0] = w;
-	    result[1] = h - 1;
+	    result[1] = (short) (h - 1);
 	    return result;
 	}
 	case LEFT: {
-	    result[0] = w - 1;
+	    result[0] = (short) (w - 1);
 	    result[1] = h;
 	    return result;
 	}
 	case RIGHT: {
-	    result[0] = w + 1;
+	    result[0] = (short) (w + 1);
 	    result[1] = h;
 	    return result;
 	}
 	case LEFT_UP: {
-	    result[0] = w - 1;
-	    result[1] = h - 1;
+	    result[0] = (short) (w - 1);
+	    result[1] = (short) (h - 1);
 	    return result;
 	}
 	case RIGHT_DOWN: {
-	    result[0] = w + 1;
-	    result[1] = h + 1;
+	    result[0] = (short) (w + 1);
+	    result[1] = (short) (h + 1);
 	    return result;
 	}
 	case LEFT_DOWN: {
-	    result[0] = w - 1;
-	    result[1] = h + 1;
+	    result[0] = (short) (w - 1);
+	    result[1] = (short) (h + 1);
 	    return result;
 	}
 	case RIGHT_UP: {
-	    result[0] = w + 1;
-	    result[1] = h - 1;
+	    result[0] = (short) (w + 1);
+	    result[1] = (short) (h - 1);
 	    return result;
 	}
 
@@ -118,7 +121,7 @@ public class ChunkAnalyzer implements Callable<Points> {
 	return null;
     }
 
-    protected boolean isBlackPixel(int x, int y) {
+    protected boolean isBlackPixel(short x, short y) {
 
 	if (x > img.getWidth() - 1 || y > img.getHeight() - 1 || x < 0 || y < 0) {
 	    // sb.append("Out of bounds when check. return...\n");
@@ -133,18 +136,26 @@ public class ChunkAnalyzer implements Callable<Points> {
 	int green = (color >>> 8) & 0xFF;
 	int blue = (color >>> 0) & 0xFF;
 	float luminance = (red * 0.2126f + green * 0.7152f + blue * 0.0722f) / 255;
-	if (isDark) {
-	    if (luminance >= this.luminanceFactor /* 0.4f */) {
-		return false;
-	    } else {
-		return true;
-	    }
+	/*
+	 * if (isDark) {
+	 * if (luminance >= this.luminanceFactor ) {
+	 * return false;
+	 * } else {
+	 * return true;
+	 * }
+	 * } else {
+	 * if (luminance <= this.luminanceFactor ) {
+	 * return false;
+	 * } else {
+	 * return true;
+	 * }
+	 * }
+	 */
+	if (luminance >= minLum && luminance <= maxLum) {
+
+	    return true;
 	} else {
-	    if (luminance <= this.luminanceFactor /* 0.4f */) {
-		return false;
-	    } else {
-		return true;
-	    }
+	    return false;
 	}
     }
 
